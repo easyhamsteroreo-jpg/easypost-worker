@@ -1,0 +1,302 @@
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Easy Почта — Рабочее место сотрудника (Расширенная база)</title>
+    <style>
+        :root {
+            --primary: #5b21b6;
+            --primary-dark: #4c1d95;
+            --secondary: #1e1b4b;
+            --accent: #7c3aed;
+            --bg-color: #f8fafc;
+            --card-bg: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --red-np: #e30613;
+        }
+
+        * { box-sizing: border-box; margin: 0; padding: 0; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+        body { background-color: var(--bg-color); color: var(--text-main); line-height: 1.5; }
+
+        header { background: var(--secondary); color: #fff; padding: 12px 5%; display: flex; justify-content: space-between; align-items: center; border-bottom: 2px solid var(--primary); }
+        .logo-area { display: flex; align-items: center; gap: 10px; cursor: pointer; }
+        .logo-icon { background: var(--red-np); color: white; width: 40px; height: 40px; display: flex; align-items: center; justify-content: center; font-weight: bold; font-size: 20px; border-radius: 8px; box-shadow: 0 4px 10px rgba(227,6,19,0.3); }
+        .logo-text { font-size: 22px; font-weight: 800; letter-spacing: 0.5px; color: #fff; }
+        .logo-text span { color: #f43f5e; }
+        
+        .header-nav { display: flex; gap: 20px; align-items: center; }
+        .header-nav a { color: #cbd5e1; text-decoration: none; font-size: 14px; font-weight: 500; transition: color 0.2s; cursor: pointer; }
+        .header-nav a:hover { color: #fff; }
+        .badge-staff { background: #f43f5e; color: white; padding: 4px 10px; border-radius: 6px; font-size: 12px; font-weight: bold; }
+
+        .hero { background: linear-gradient(135deg, var(--secondary) 0%, var(--primary) 100%); color: #fff; padding: 40px 5%; display: flex; flex-direction: column; align-items: center; text-align: center; }
+        .hero h1 { font-size: 32px; margin-bottom: 8px; font-weight: 800; }
+        .hero p { font-size: 15px; color: #e2e8f0; margin-bottom: 25px; max-width: 600px; }
+
+        .staff-card { background: var(--card-bg); width: 100%; max-width: 700px; padding: 25px; border-radius: 16px; box-shadow: 0 10px 30px rgba(0,0,0,0.2); color: var(--text-main); text-align: left; }
+        .staff-card label { display: block; font-weight: 700; margin-bottom: 8px; font-size: 14px; color: var(--secondary); }
+        .tracker-input-group { display: flex; gap: 10px; }
+        .tracker-input-group input { flex: 1; padding: 14px 16px; border: 2px solid var(--border); border-radius: 8px; font-size: 16px; outline: none; transition: border-color 0.2s; }
+        .tracker-input-group input:focus { border-color: var(--primary); }
+        .btn-main { background: var(--red-np); color: white; border: none; padding: 0 25px; border-radius: 8px; font-weight: 700; font-size: 16px; cursor: pointer; transition: background 0.2s, transform 0.1s; }
+        .btn-main:hover { background: #c5050f; }
+        .btn-main:active { transform: scale(0.98); }
+
+        .quick-actions { display: grid; grid-template-columns: repeat(auto-fit, minmax(180px, 1fr)); gap: 15px; max-width: 1100px; margin: -30px auto 40px auto; padding: 0 5%; position: relative; z-index: 5; }
+        .action-tile { background: var(--card-bg); padding: 20px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); text-align: center; cursor: pointer; transition: transform 0.2s, box-shadow 0.2s; border-bottom: 4px solid var(--primary); }
+        .action-tile:hover { transform: translateY(-5px); box-shadow: 0 8px 25px rgba(91,33,182,0.15); }
+        .action-tile .icon { font-size: 28px; margin-bottom: 10px; display: inline-block; }
+        .action-tile h3 { font-size: 15px; color: var(--text-main); margin-bottom: 5px; }
+        .action-tile p { font-size: 11px; color: var(--text-muted); }
+
+        .container { max-width: 1100px; margin: 0 auto 50px auto; padding: 0 20px; }
+        .section-title { font-size: 24px; font-weight: 700; color: var(--secondary); margin-bottom: 20px; display: flex; align-items: center; gap: 10px; }
+        
+        .services-grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; }
+        .service-card { background: var(--card-bg); padding: 25px; border-radius: 12px; box-shadow: 0 4px 12px rgba(0,0,0,0.03); border: 1px solid var(--border); display: flex; flex-direction: column; justify-content: space-between; }
+        .service-card h4 { font-size: 18px; color: var(--primary); margin-bottom: 10px; }
+        .service-card p { font-size: 14px; color: var(--text-muted); margin-bottom: 15px; }
+
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(15, 23, 42, 0.6); backdrop-filter: blur(4px); justify-content: center; align-items: center; z-index: 1000; padding: 15px; }
+        .modal-box { background: #fff; width: 100%; max-width: 650px; border-radius: 16px; padding: 30px; box-shadow: 0 20px 40px rgba(0,0,0,0.2); position: relative; animation: modalIn 0.3s ease; max-height: 90vh; overflow-y: auto; }
+        @keyframes modalIn { from { transform: translateY(20px); opacity: 0; } to { transform: translateY(0); opacity: 1; } }
+        .modal-close { position: absolute; top: 20px; right: 20px; background: none; border: none; font-size: 24px; cursor: pointer; color: var(--text-muted); }
+        .modal-box h3 { font-size: 22px; color: var(--secondary); margin-bottom: 15px; }
+        
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; font-size: 13px; font-weight: 600; margin-bottom: 5px; color: var(--text-main); }
+        .form-control { width: 100%; padding: 12px; border: 1px solid var(--border); border-radius: 8px; font-size: 14px; outline: none; }
+        .form-control:focus { border-color: var(--primary); }
+        
+        .result-box { margin-top: 15px; padding: 15px; background: #f1f5f9; border-radius: 8px; border-left: 4px solid var(--primary); font-size: 14px; display: none; }
+
+        footer { background: var(--secondary); color: #94a3b8; padding: 40px 5%; text-align: center; font-size: 14px; margin-top: auto; }
+        footer p { margin-bottom: 10px; }
+        .footer-links { display: flex; justify-content: center; gap: 20px; margin-bottom: 20px; }
+        .footer-links a { color: #cbd5e1; text-decoration: none; }
+        .footer-links a:hover { color: #fff; }
+
+        @media(max-width: 768px) {
+            .hero h1 { font-size: 26px; }
+            .tracker-input-group { flex-direction: column; }
+            .header-nav { display: none; }
+        }
+    </style>
+</head>
+<body>
+
+    <header>
+        <div class="logo-area" onclick="location.reload()">
+            <div class="logo-icon">E</div>
+            <div class="logo-text">Easy<span>Почта</span></div>
+        </div>
+        <div class="header-nav">
+            <a onclick="openModal('staffPortal')">Рабочее место</a>
+            <a onclick="openModal('tracking')">Отследить</a>
+            <a onclick="openModal('calc')">Тарифы</a>
+            <div class="badge-staff">Оператор</div>
+        </div>
+    </header>
+
+    <section class="hero">
+        <h1>Рабочее место сотрудника</h1>
+        <p>Введите последние 4 цифры трек-номера для быстрого поиска заказа и имени клиента.</p>
+        
+        <div class="staff-card">
+            <label for="mainStaffInput">Поиск посылки по последним 4 цифрам</label>
+            <div class="tracker-input-group">
+                <input type="text" id="mainStaffInput" maxlength="4" placeholder="Например: 3985">
+                <button class="btn-main" onclick="searchStaffPackage()">Найти заказ</button>
+            </div>
+            <div id="mainStaffResult" class="result-box"></div>
+        </div>
+    </section>
+
+    <div class="quick-actions">
+        <div class="action-tile" onclick="openModal('staffPortal')">
+            <span class="icon">🖥️</span>
+            <h3>Терминал выдачи</h3>
+            <p>База на 100+ заказов</p>
+        </div>
+        <div class="action-tile" onclick="openModal('calc')">
+            <span class="icon">🧮</span>
+            <h3>Рассчитать</h3>
+            <p>Цена и сроки</p>
+        </div>
+        <div class="action-tile" onclick="openModal('branches')">
+            <span class="icon">📍</span>
+            <h3>Отделения</h3>
+            <p>Карта пунктов</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <h2 class="section-title"><span>🚀</span> Сервисы Easy Почта</h2>
+        <div class="services-grid">
+            <div class="service-card">
+                <div>
+                    <h4>Международная доставка</h4>
+                    <p>Доставка отправлений из маркетплейсов Temu, AliExpress и других платформ.</p>
+                </div>
+                <button class="btn-main" style="padding: 8px 15px; font-size: 13px; width: fit-content;" onclick="alert('Доступно в терминале')">Подробнее</button>
+            </div>
+            <div class="service-card">
+                <div>
+                    <h4>Денежные переводы</h4>
+                    <p>Быстрое получение переводов и наложенных платежей в отделении.</p>
+                </div>
+                <button class="btn-main" style="padding: 8px 15px; font-size: 13px; width: fit-content;" onclick="alert('Доступно в отделении')">Открыть</button>
+            </div>
+        </div>
+    </div>
+
+    <div id="appModal" class="modal-overlay" onclick="handleOutsideClick(event)">
+        <div class="modal-box">
+            <button class="modal-close" onclick="closeModal()">&times;</button>
+            <div id="modalContent"></div>
+        </div>
+    </div>
+
+    <footer>
+        <div class="footer-links">
+            <a onclick="openModal('about')">О компании</a>
+            <a onclick="openModal('contacts')">Контакты</a>
+        </div>
+        <p>&copy; 2026 Easy Почта. Все права защищены.</p>
+    </footer>
+
+    <script>
+        // Сгенерированная база данных более чем из 100 реальных/тестовых заказов
+        const firstNames = ["Александр", "Станислав", "Максим", "Дмитрий", "Иван", "Артем", "Владимир", "Андрей", "Сергей", "Евгений", "Анна", "Мария", "Елена", "Ольга", "Татьяна", "Ирина", "Юлия", "Виктория", "Наталья", "Катерина"];
+        const lastNames = ["Петренко", "Левковский", "Ковальчук", "Бондаренко", "Шевченко", "Мельник", "Кравченко", "Бойко", "Ткаченко", "Коваль", "Гриценко", "Олейник", "Полищук", "Савченко", "Мороз", "Лысенко", "Романюк", "Козачок", "Руденко", "Герасименко"];
+        const stores = ["Temu", "Rozetka", "AliExpress", "Ebay", "Prom.ua", "Amazon", "EasyShop"];
+        const items = ["Чехол для телефона", "Беспроводные наушники", "Смарт-часы", "Защитное стекло", "Светодиодная лента", "Рюкзак городской", "Кабель USB-Type C", "Настольная лампа", "Электронный конструктор", "Фитнес-браслет", "Компьютерная мышь", "Коврик для мыши", "Портативная колонка", "Павербанк 20000mAh", "Автомобильный держатель"];
+
+        let shipmentsDB = [];
+
+        // Создаем ровно 105 уникальных заказов с четырехзначными окончаниями
+        for (let i = 1; i <= 105; i++) {
+            let rndNum = 1000 + i * 7; // гарантирует уникальность концовки или разнообразие
+            let tailStr = String(rndNum).slice(-4);
+            let codeStr = "UA" + (700000000 + i * 3) + "EE";
+            if (i === 1) {
+                // Особый заказ для пользователя
+                shipmentsDB.push({ code: "RL753553985EE", tail: "3985", name: "Станислав Левковский", store: "Temu", item: "Электронные компоненты", status: "Готово к выдаче в отделении (Овруч)" });
+            } else {
+                let fName = firstNames[(i * 3) % firstNames.length];
+                let lName = lastNames[(i * 7) % lastNames.length];
+                let st = stores[i % stores.length];
+                let itm = items[(i * 5) % items.length];
+                shipmentsDB.push({
+                    code: codeStr,
+                    tail: tailStr,
+                    name: `${fName} ${lName}`,
+                    store: st,
+                    item: itm,
+                    status: "Готово к выдаче"
+                });
+            }
+        }
+
+        function searchStaffPackage() {
+            const query = document.getElementById('mainStaffInput').value.trim();
+            const resBox = document.getElementById('mainStaffResult');
+            
+            resBox.style.display = 'block';
+            if (!query) {
+                resBox.style.borderLeftColor = '#e30613';
+                resBox.innerHTML = "<strong>Ошибка:</strong> Введите последние 4 цифры.";
+                return;
+            }
+
+            let found = shipmentsDB.filter(s => s.tail.includes(query) || s.code.includes(query));
+
+            if (found.length > 0) {
+                resBox.style.borderLeftColor = '#5b21b6';
+                let htmlOutput = `<strong>Найдено заказов: ${found.length}</strong><br><br>`;
+                found.slice(0, 5).forEach(item => {
+                    htmlOutput += `
+                        <div style="margin-bottom: 10px; padding-bottom: 8px; border-bottom: 1px solid #cbd5e1;">
+                            👤 <b>Клиент:</b> ${item.name}<br>
+                            🛍️ <b>Магазин:</b> ${item.store} (${item.item})<br>
+                            📦 <b>Трек:</b> ${item.code} [Концовка: <b>${item.tail}</b>]<br>
+                            📌 <b>Статус:</b> <span style="color: #16a34a; font-weight: bold;">${item.status}</span><br>
+                            <button class="btn-main" style="padding: 4px 10px; font-size: 11px; margin-top: 5px;" onclick="alert('Заказ выдан клиенту: ${item.name}')">Выдать</button>
+                        </div>
+                    `;
+                });
+                resBox.innerHTML = htmlOutput;
+            } else {
+                resBox.style.borderLeftColor = '#e30613';
+                resBox.innerHTML = `<strong>Не найдено:</strong> Заказов с окончанием «${query}» в базе не обнаружено.`;
+            }
+        }
+
+        function openModal(type) {
+            const overlay = document.getElementById('appModal');
+            const content = document.getElementById('modalContent');
+            overlay.style.display = 'flex';
+
+            if (type === 'staffPortal') {
+                content.innerHTML = `
+                    <h3>Терминал выдачи (База 100+ посылок)</h3>
+                    <p style="font-size: 13px; color: var(--text-muted); margin-bottom: 15px;">Введите последние 4 цифры заказа для быстрого поиска имени получателя.</p>
+                    <div class="form-group">
+                        <label>Последние 4 цифры:</label>
+                        <input type="text" id="modalStaffInput" class="form-control" maxlength="4" placeholder="Например: 3985">
+                    </div>
+                    <button class="btn-main" style="width:100%; padding: 12px;" onclick="execModalStaffSearch()">Искать в базе</button>
+                    <div id="modalStaffRes" class="result-box"></div>
+                `;
+            } else if (type === 'tracking') {
+                content.innerHTML = `
+                    <h3>Отслеживание отправления</h3>
+                    <div class="form-group">
+                        <label>Номер накладной:</label>
+                        <input type="text" id="modalTrackInput" class="form-control" value="RL753553985EE" placeholder="RL753553985EE">
+                    </div>
+                    <button class="btn-main" style="width:100%; padding: 12px;" onclick="alert('Посылка в отделении Овруч')">Проверить</button>
+                `;
+            } else if (type === 'calc') {
+                content.innerHTML = `<h3>Калькулятор</h3><p>Расчет стоимости экспресс-доставки.</p>`;
+            } else if (type === 'branches') {
+                content.innerHTML = `<h3>Отделение Овруч</h3><p>Центральный пункт выдачи заказов.</p>`;
+            } else if (type === 'about') {
+                content.innerHTML = `<h3>О системе</h3><p>Внутреннее ПО оператора Easy Почта.</p>`;
+            } else if (type === 'contacts') {
+                content.innerHTML = `<h3>Поддержка</h3><p>Техническая линия для сотрудников.</p>`;
+            }
+        }
+
+        function closeModal() {
+            document.getElementById('appModal').style.display = 'none';
+        }
+
+        function handleOutsideClick(event) {
+            const overlay = document.getElementById('appModal');
+            if (event.target === overlay) {
+                closeModal();
+            }
+        }
+
+        function execModalStaffSearch() {
+            const val = document.getElementById('modalStaffInput').value.trim();
+            const res = document.getElementById('modalStaffRes');
+            res.style.display = 'block';
+            let found = shipmentsDB.filter(s => s.tail.includes(val) || s.code.includes(val));
+            if (found.length > 0) {
+                let html = `<b>Найдено: ${found.length}</b><br><br>`;
+                found.slice(0, 3).forEach(i => {
+                    html += `👤 <b>${i.name}</b> — ${i.store} (${i.item}) [Трек: ${i.code}]<br><button class="btn-main" style="padding: 3px 8px; font-size: 11px; margin: 4px 0;" onclick="alert('Выдано!')">Выдать</button><br><hr style="border:0; border-top:1px solid #ddd; margin:5px 0;">`;
+                });
+                res.innerHTML = html;
+            } else {
+                res.innerHTML = "Ничего не найдено по этому запросу.";
+            }
+        }
+    </script>
+</body>
+</html>
